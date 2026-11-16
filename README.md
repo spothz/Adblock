@@ -1,14 +1,14 @@
 # Adblock
 
-Mihomo rule-sets generated from Schakal source.
+Mihomo domain rule-set generated from the Schakal / 4PDA hosts list.
 
-Источник: https://schakal.ru/hosts/alive_hosts_ru_com.txt
+Source: https://schakal.ru/hosts/alive_hosts_ru_com.txt
 
-Ежедневное обновление GitHub Actions в 02:23 UTC.
+## Automatic update
 
-## Домены
+GitHub Actions downloads the source every day at 02:23 UTC, filters it, validates the domains and publishes the updated file when its content changes. A manual run is also available in the Actions tab.
 
-Файл: `ruleset/schakal_ru_com.yaml`
+## Mihomo rule-provider
 
 ```yaml
 rule-providers:
@@ -21,31 +21,10 @@ rule-providers:
     interval: 86400
 ```
 
-Применение (действие выбери сам):
+Apply it in `rules:` with the action you want, for example:
 
 ```yaml
 - RULE-SET,schakal-ru-com,REJECT
 ```
 
-## IP-адреса
-
-Файл: `ruleset/schakal_ips.yaml`
-
-```yaml
-rule-providers:
-  schakal-ips:
-    type: http
-    behavior: ipcidr
-    format: yaml
-    url: https://raw.githubusercontent.com/spothz/Adblock/main/ruleset/schakal_ips.yaml
-    path: ./ruleset/schakal_ips.yaml
-    interval: 86400
-```
-
-Применение (действие выбери сам):
-
-```yaml
-- RULE-SET,schakal-ips,REJECT
-```
-
-IP-правило формируется только из реальных IP в первом поле hosts-записи. Служебный адрес `0.0.0.0`, которым в hosts-файле блокируются домены, в IP-набор не попадает. Если в источнике нет реальных IP-адресов, IP rule-set будет пустым (`payload:`).
+Only domain rules are generated. IP/CIDR extraction and the separate IP rule-set have been removed.
