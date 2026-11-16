@@ -1,0 +1,2 @@
+# Adblock
+Rule-set mihomo.
