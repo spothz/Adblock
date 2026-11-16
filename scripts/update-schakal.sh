@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Regenerate both Mihomo rule-sets on each scheduled or manual workflow run.
+
 SOURCE_URL="https://schakal.ru/hosts/alive_hosts_ru_com.txt"
 DOMAIN_OUT="ruleset/schakal_ru_com.yaml"
 IP_OUT="ruleset/schakal_ips.yaml"
