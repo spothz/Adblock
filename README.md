@@ -1,20 +1,14 @@
 # Adblock
 
-Mihomo rule-set.
+Mihomo rule-sets generated from Schakal source.
 
-## Schakal RU/COM hosts
+Источник: https://schakal.ru/hosts/alive_hosts_ru_com.txt
 
-Источник:
+Ежедневное обновление GitHub Actions в 02:23 UTC.
 
-https://schakal.ru/hosts/alive_hosts_ru_com.txt
+## Домены
 
-Список автоматически преобразуется из hosts в Mihomo YAML rule-set:
-
-`ruleset/schakal_ru_com.yaml`
-
-Обновление выполняется GitHub Actions ежедневно в 02:17 UTC.
-
-Подключение в Mihomo:
+Файл: `ruleset/schakal_ru_com.yaml`
 
 ```yaml
 rule-providers:
@@ -25,9 +19,33 @@ rule-providers:
     url: https://raw.githubusercontent.com/spothz/Adblock/main/ruleset/schakal_ru_com.yaml
     path: ./ruleset/schakal_ru_com.yaml
     interval: 86400
-
-rules:
-  - RULE-SET,schakal-ru-com,REJECT
 ```
 
-В результате rule-set содержит домены из исходного списка, без IP-адресов и hosts-записей.
+Применение (действие выбери сам):
+
+```yaml
+- RULE-SET,schakal-ru-com,REJECT
+```
+
+## IP-адреса
+
+Файл: `ruleset/schakal_ips.yaml`
+
+```yaml
+rule-providers:
+  schakal-ips:
+    type: http
+    behavior: ipcidr
+    format: yaml
+    url: https://raw.githubusercontent.com/spothz/Adblock/main/ruleset/schakal_ips.yaml
+    path: ./ruleset/schakal_ips.yaml
+    interval: 86400
+```
+
+Применение (действие выбери сам):
+
+```yaml
+- RULE-SET,schakal-ips,REJECT
+```
+
+IP-правило формируется только из реальных IP в первом поле hosts-записи. Служебный адрес `0.0.0.0`, которым в hosts-файле блокируются домены, в IP-набор не попадает. Если в источнике нет реальных IP-адресов, IP rule-set будет пустым (`payload:`).
