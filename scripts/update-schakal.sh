@@ -21,7 +21,7 @@ domain_out = Path(sys.argv[2])
 ip_out = Path(sys.argv[3])
 
 domains = set()
-ip_networks = set()
+ips = set()
 
 for raw in src.read_text(encoding="utf-8", errors="ignore").splitlines():
     line = raw.strip()
@@ -36,11 +36,9 @@ for raw in src.read_text(encoding="utf-8", errors="ignore").splitlines():
     except ValueError:
         continue
 
-    # 0.0.0.0 / :: are hosts-file blocking targets, not destination IPs.
-    if not address.is_unspecified or address.version == 6 and str(address) != "::":
-        if not address.is_loopback and not address.is_link_local and not address.is_multicast:
-            prefix = 32 if address.version == 4 else 128
-            ip_networks.add(f"{address}/{prefix}")
+    # Hosts blocking placeholders are not real destination IP addresses.
+    if not address.is_unspecified and not address.is_loopback and not address.is_link_local and not address.is_multicast:
+        ips.add(f"{address}/{32 if address.version == 4 else 128}")
 
     for item in parts[1:]:
         domain = item.rstrip(".").lower()
@@ -52,20 +50,23 @@ for raw in src.read_text(encoding="utf-8", errors="ignore").splitlines():
         ):
             domains.add(domain)
 
-def write_rule_set(path, title, values):
+def write_set(path, values):
     with path.open("w", encoding="utf-8", newline="\n") as f:
-        f.write(f"# Auto-generated from Schakal hosts list\n# {title}\n# Source: {SOURCE_URL}\npayload:\n")
-        for value in sorted(values):
-            f.write(f"  - '{value}'\n")
+        f.write("# Auto-generated from Schakal hosts list\n")
+        f.write("# Source: https://schakal.ru/hosts/alive_hosts_ru_com.txt\n")
+        if not values:
+            f.write("payload: []\n")
+        else:
+            f.write("payload:\n")
+            for value in sorted(values):
+                f.write(f"  - '{value}'\n")
 
-write_rule_set(domain_out, "Mihomo domain rule-set", domains)
-write_rule_set(ip_out, "Mihomo IP-CIDR rule-set", ip_networks)
-
-print(f"Generated {len(domains)} domains -> {domain_out}")
-print(f"Generated {len(ip_networks)} IPs -> {ip_out}")
+write_set(domain_out, domains)
+write_set(ip_out, ips)
+print(f"Domains: {len(domains)}; IP addresses: {len(ips)}")
 PY
 
 test -s "$DOMAIN_OUT"
 test -s "$IP_OUT"
-grep -q '^payload:$' "$DOMAIN_OUT"
-grep -q '^payload:$' "$IP_OUT"
+grep -q '^payload:' "$DOMAIN_OUT"
+grep -q '^payload:' "$IP_OUT"
