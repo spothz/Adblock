@@ -1,4 +1,4 @@
-name: Update Schakal rule-sets
+name: Update Schakal domain rule-set
 
 on:
   schedule:
@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: update-schakal
+  group: update-schakal-domains
   cancel-in-progress: true
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Generate Mihomo rule-sets
+      - name: Download, filter and generate domains
         run: bash scripts/update-schakal.sh
 
       - name: Check changes
@@ -36,11 +36,11 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Commit update
+      - name: Commit generated rule-set
         if: steps.diff.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ruleset/schakal_ru_com.yaml ruleset/schakal_ips.yaml
-          git commit -m "Update Schakal Mihomo rule-sets"
+          git add -A -- ruleset/schakal_ru_com.yaml ruleset/schakal_ips.yaml
+          git commit -m "Update Schakal domain rule-set"
           git push
