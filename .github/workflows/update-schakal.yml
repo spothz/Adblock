@@ -30,7 +30,7 @@ jobs:
       - name: Check changes
         id: diff
         run: |
-          if git diff --quiet -- ruleset/schakal_ru_com.yaml ruleset/schakal_ips.yaml; then
+          if [ -z "$(git status --porcelain -- ruleset/schakal_ru_com.yaml ruleset/schakal_ips.yaml)" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
