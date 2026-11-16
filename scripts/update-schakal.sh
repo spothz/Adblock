@@ -10,7 +10,7 @@ trap 'rm -f "$TMP" "$DOMAINS"' EXIT
 mkdir -p ruleset
 
 # Download the complete source and reject error pages or truncated responses.
-curl -fL --retry 3 --retry-delay 5 --connect-timeout 20 "$SOURCE_URL" -o "$TMP"
+curl -fL --retry 3 --retry-delay 5 --connect-timeout 20 --max-time 180 --speed-time 30 --speed-limit 1 "$SOURCE_URL" -o "$TMP"
 grep -Fq '!Title: 4PDA Community hosts blacklist' "$TMP"
 LINES="$(wc -l < "$TMP")"
 if [ "$LINES" -lt 10000 ]; then
